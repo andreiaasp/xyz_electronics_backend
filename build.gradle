@@ -29,6 +29,7 @@ dependencies {
     implementation 'mysql:mysql-connector-java'
     // Lombok for reducing boilerplate code
     implementation 'org.projectlombok:lombok'
+    implementation 'mysql:mysql-connector-java:8.0.33'
 }
 
 tasks.named('test') {

@@ -1,18 +1,27 @@
 package com.example.xyzelectronic.xyz_electronicsbackend.entity;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.lang.NonNull;
 
+@Entity
 public class Product {
+    @jakarta.persistence.Id
     @Id
-    private String id;
+    private Long id;
     @Column
     private String name;
     private int price;
     private String description;
-    @NonNull
     private String supplier;
+
+    public Product() {
+    }
+
+    public Product(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -47,18 +56,8 @@ public class Product {
         this.supplier = supplier;
     }
 
-    public Product() {
-    }
-
-    public Product(String id) {
-        this.id = id;
-    }
-
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
 }
