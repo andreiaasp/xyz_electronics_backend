@@ -1,14 +1,12 @@
 package com.example.xyzelectronic.xyz_electronicsbackend.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.*;
 import org.springframework.lang.NonNull;
 
 @Entity
 public class Product {
-    @jakarta.persistence.Id
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Column
     private String name;

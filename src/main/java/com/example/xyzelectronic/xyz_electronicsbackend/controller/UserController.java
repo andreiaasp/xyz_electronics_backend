@@ -1,6 +1,7 @@
 package com.example.xyzelectronic.xyz_electronicsbackend.controller;
 
 import com.example.xyzelectronic.xyz_electronicsbackend.repository.UserRepository;
+import com.example.xyzelectronic.xyz_electronicsbackend.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.example.xyzelectronic.xyz_electronicsbackend.entity.User;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin("http://localhost:3000/")
 public class UserController {
 
     private final UserRepository userRepository;
@@ -28,33 +30,30 @@ public class UserController {
         return userRepository.findAll();
     }
 
-    @GetMapping("/users/{id}")
-    public User getUserById(@PathVariable("id") Long id) {
-        return userRepository.getReferenceById(id);
+    @GetMapping("/user/{id}")
+    User getUserById(@PathVariable Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
-    @PutMapping("/users/{id}")
+    @PutMapping("/user/{id}")
     User updateUser(@PathVariable Long id, @RequestBody User updatedUser){
-        Optional<User> optionalUser = userRepository.findById(id);
-        if(optionalUser.isEmpty()){
-            return null;
+        return userRepository.findById(id).map(user -> {
+            user.setName(updatedUser.getName());
+            user.setEmail(updatedUser.getEmail());
+            user.setUsername(updatedUser.getUsername());
+            return userRepository.save(user);
+        }).orElseThrow(() -> new UserNotFoundException(id));
+
+    }
+
+    @DeleteMapping("/user/{id}")
+    String deleteUser(@PathVariable Long id) {
+
+        if(!userRepository.existsById(id)){
+            throw new UserNotFoundException(id);
         }
 
-        // Get the existing user from the optional (we know it exists)
-        User existingUser = optionalUser.get();
-
-        // Apply the updates from the received user data to the existing user
-        // You can also perform additional checks or validations here
-        existingUser.setUsername(updatedUser.getUsername());
-        existingUser.setEmail(updatedUser.getEmail());
-        existingUser.setName(updatedUser.getName());
-
-        // Save the updated user to the database using the repository's save() method
-        return userRepository.save(existingUser);
-    }
-
-    @DeleteMapping("/users/{id}")
-    public void deleteUsers(@PathVariable("id") Long id) {
         userRepository.deleteById(id);
+        return "User with id " + id + " has been deleted successfully.";
     }
 }
